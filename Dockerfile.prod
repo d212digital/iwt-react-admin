@@ -1,0 +1,11 @@
+FROM node:12 as build-stage
+WORKDIR /iwt
+COPY /template .
+RUN yarn cache clean
+RUN yarn install
+RUN yarn build
+
+FROM nginx as production-stage
+RUN mkdir -p /app/iwt
+COPY --from=build-stage /iwt/build /app/iwt
+COPY /template/nginx.conf /etc/nginx/nginx.conf
